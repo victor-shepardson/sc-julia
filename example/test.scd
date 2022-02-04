@@ -7,9 +7,9 @@ s.options.memSize = 1024 * 1024;
 s.boot
 )
 
-s.options.asOptionsString
-
 s.reboot
+
+("xattr -d -r com.apple.quarantine"+Platform.userExtensionDir.quote++"/sc-julia/").runInTerminal
 
 (
 ~synth = {
