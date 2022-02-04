@@ -5,14 +5,21 @@
 
 #include "SC_PlugIn.hpp"
 
+extern "C" {
+    #include "julia_init.h"
+}
+#include "scjulia.h"
+
 namespace JuliaUGen {
+
+bool JULIA_INIT = false;
 
 class JuliaUGen : public SCUnit {
 public:
     JuliaUGen();
 
     // Destructor
-    // ~JuliaUGen();
+    ~JuliaUGen();
 
 private:
     // Calc function

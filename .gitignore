@@ -1,3 +1,5 @@
 .vimrc
-
-build*
+build/*
+scjulia-*
+Manifest.toml
+.vscode
