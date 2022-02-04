@@ -87,6 +87,8 @@ include_directories(${CMAKE_SOURCE_DIR}/${JULIA_BUILD}/include/)
 set(CMAKE_MACOSX_RPATH true)
 set(CMAKE_SKIP_BUILD_RPATH true)
 add_link_options("-Wl,-rpath,@loader_path/../${JULIA_BUILD}/lib/")
+add_link_options("-Wl,-rpath,@loader_path/../${JULIA_BUILD}/lib/julia/")
+
 
 add_library(JULIA_LIB SHARED IMPORTED)
 set_property(TARGET JULIA_LIB PROPERTY IMPORTED_LOCATION ${CMAKE_SOURCE_DIR}/${JULIA_BUILD}/lib/lib${JULIA}.dylib)
