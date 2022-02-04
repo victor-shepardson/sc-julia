@@ -29,7 +29,7 @@ Then, use CMake to configure and build the SuperCollider extension:
 
     mkdir build
     cd build
-    cmake .. -DCMAKE_BUILD_TYPE=Release -DJULIA_PATH=`julia --startup-file=no -e 'print(dirname(Sys.BINDIR))'`
+    cmake .. -DCMAKE_BUILD_TYPE=Release
     cmake --build . --config Release
 
 Finally, link `sc-julia` into your SuperCollider extensions directory.
@@ -44,6 +44,8 @@ SuperCollider extensions directory: add the option `-DCMAKE_INSTALL_PREFIX=/path
 
 It's expected that the SuperCollider repo is cloned at `../supercollider` relative to this repo. If
 it's not: add the option `-DSC_PATH=/path/to/sc/source`.
+
+The julia executable should be linked to a default system location so it can be invoked as `julia` or `julia-debug` (in the latter case supply `-DJULIA=julia-debug`)
 
 ### Developing
 

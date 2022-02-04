@@ -4,6 +4,25 @@
 # 2022-02-02
 ####################################################################################################
 
+# TODO: merge with Julia package Makefile so this is specified in one place
+set(JULIA_PACKAGE SCJulia)
+set(JULIA_LIBNAME scjulia)
+set(JULIA_LIBVERSION 0.1.0)
+set(JULIA_BUILD ${JULIA_PACKAGE}/${JULIA_LIBNAME}-${JULIA_LIBVERSION}/${JULIA_LIBNAME})
+
+# set the julia executable (julia or julia-debug)
+if(NOT JULIA)
+    message(WARNING "No JULIA executable specified, defaulting to 'julia'.")
+    set(JULIA julia)
+endif()
+
+# get the julia path
+execute_process(
+    COMMAND ${JULIA} --startup-file=no -e "print(dirname(Sys.BINDIR))"
+    OUTPUT_VARIABLE JULIA_PATH
+)
+message(STATUS "Found Julia? ${JULIA_PATH}")
+
 ####################################################################################################
 # basic project config
 cmake_minimum_required(VERSION 3.12)
@@ -63,26 +82,22 @@ endif()
 
 # Julia:
 include_directories(${JULIA_PATH}/include/julia)
-message(STATUS "Found Julia? ${JULIA_PATH}")
-# TODO: infer version number?
-include_directories(${CMAKE_SOURCE_DIR}/SCJulia/scjulia-0.1.0/scjulia/include/)
+include_directories(${CMAKE_SOURCE_DIR}/${JULIA_BUILD}/include/)
 
 set(CMAKE_MACOSX_RPATH true)
 set(CMAKE_SKIP_BUILD_RPATH true)
-add_link_options("-Wl,-rpath,@loader_path/../SCJulia/scjulia-0.1.0/scjulia/lib/")
+add_link_options("-Wl,-rpath,@loader_path/../${JULIA_BUILD}/lib/")
 
 add_library(JULIA_LIB SHARED IMPORTED)
-set_property(TARGET JULIA_LIB PROPERTY IMPORTED_LOCATION ${CMAKE_SOURCE_DIR}/SCJulia/scjulia-0.1.0/scjulia/lib/libjulia-debug.dylib)
+set_property(TARGET JULIA_LIB PROPERTY IMPORTED_LOCATION ${CMAKE_SOURCE_DIR}/${JULIA_BUILD}/lib/lib${JULIA}.dylib)
 
 add_library(SCJULIA_LIB SHARED IMPORTED)
-set_property(TARGET SCJULIA_LIB PROPERTY IMPORTED_LOCATION ${CMAKE_SOURCE_DIR}/SCJulia/scjulia-0.1.0/scjulia/lib/libscjulia.dylib)
+set_property(TARGET SCJULIA_LIB PROPERTY IMPORTED_LOCATION ${CMAKE_SOURCE_DIR}/${JULIA_BUILD}/lib/lib${JULIA_LIBNAME}.dylib)
 
 set(shared_libs
     JULIA_LIB
     SCJULIA_LIB
 )
-message(STATUS ${shared_libs})
-
 
 ####################################################################################################
 # Begin target JuliaUGen
