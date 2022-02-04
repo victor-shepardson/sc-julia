@@ -70,35 +70,19 @@ include_directories(${CMAKE_SOURCE_DIR}/SCJulia/scjulia-0.1.0/scjulia/include/)
 set(CMAKE_MACOSX_RPATH true)
 set(CMAKE_SKIP_BUILD_RPATH true)
 add_link_options("-Wl,-rpath,@loader_path/../SCJulia/scjulia-0.1.0/scjulia/lib/")
-# add_link_options("-Wl,-rpath,@loader_path/../SCJulia/scjulia-0.1.0/scjulia/lib/:@loader_path/../SCJulia/scjulia-0.1.0/scjulia/lib/julia/")
-
-# set(CMAKE_BUILD_WITH_INSTALL_RPATH false)
-# set(CMAKE_INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}/lib")
-# set(CMAKE_INSTALL_RPATH_USE_LINK_PATH true)
-
-# set(CMAKE_MACOSX_RPATH false)
-# set(CMAKE_BUILD_RPATH_USE_ORIGIN true)
-# set(CMAKE_BUILD_RPATH "@executable_path/../SCJulia/scjulia-0.1.0/scjulia/lib/:@executable_path/../SCJulia/scjulia-0.1.0/scjulia/lib/julia")
-# link_directories(@loader_path/SCJulia/scjulia-0.1.0/scjulia/lib/)
-# link_directories($ORIGIN/SCJulia/scjulia-0.1.0/scjulia/lib/julia)
-
-# link_directories(${CMAKE_SOURCE_DIR}/SCJulia/scjulia-0.1.0/scjulia/lib/)
-# link_directories(${CMAKE_SOURCE_DIR}/SCJulia/scjulia-0.1.0/scjulia/lib/julia)
-
-
-# find_library(JULIA_LIB julia-debug PATHS ${CMAKE_SOURCE_DIR}/SCJulia/scjulia-0.1.0/scjulia/lib/ REQUIRED)
-# find_library(SCJULIA_LIB scjulia PATHS ${CMAKE_SOURCE_DIR}/SCJulia/scjulia-0.1.0/scjulia/lib/ REQUIRED)
 
 add_library(JULIA_LIB SHARED IMPORTED)
-set_property(TARGET JULIA_LIB PROPERTY IMPORTED_LOCATION ${CMAKE_SOURCE_DIR}/SCJulia/scjulia-0.1.0/scjulia/lib/libjulia.dylib)
+set_property(TARGET JULIA_LIB PROPERTY IMPORTED_LOCATION ${CMAKE_SOURCE_DIR}/SCJulia/scjulia-0.1.0/scjulia/lib/libjulia-debug.dylib)
 
 add_library(SCJULIA_LIB SHARED IMPORTED)
 set_property(TARGET SCJULIA_LIB PROPERTY IMPORTED_LOCATION ${CMAKE_SOURCE_DIR}/SCJulia/scjulia-0.1.0/scjulia/lib/libscjulia.dylib)
 
-# set(shared_libs
-#     ${JULIA_LIB}
-#     ${SCJULIA_LIB}
-# )
+set(shared_libs
+    JULIA_LIB
+    SCJULIA_LIB
+)
+message(STATUS ${shared_libs})
+
 
 ####################################################################################################
 # Begin target JuliaUGen
@@ -114,27 +98,14 @@ set(JuliaUGen_schelp_files
     plugins/JuliaUGen/JuliaUGen.schelp
 )
 
-# sc_add_server_plugin(
-#     "JuliaUGen/JuliaUGen" # desination directory
-#     "JuliaUGen" # target name
-#     "${JuliaUGen_cpp_files}"
-#     "${JuliaUGen_sc_files}"
-#     "${JuliaUGen_schelp_files}"
-#     # "${shared_libs}"
-# )
-
-set(dest_dir "JuliaUGen/JuliaUGen")
-set(name "JuliaUGen")
-set(cpp "${JuliaUGen_cpp_files}") 
-set(sy_name "${name}_scsynth")
-
-add_library(${sy_name} MODULE "${cpp}")
-# target_link_libraries(${sy_name} scjulia julia-debug)
-# target_link_libraries(${sy_name} scjulia julia)
-# target_link_libraries(${sy_name} JULIA_LIB SCJULIA_LIB)
-target_link_libraries(${sy_name} ${JULIA_LIB} ${SCJULIA_LIB})
-sc_add_server_plugin_properties(${sy_name} FALSE)
-message(STATUS "Added server plugin target ${sy_name}")
+sc_add_server_plugin(
+    "JuliaUGen/JuliaUGen" # desination directory
+    "JuliaUGen" # target name
+    "${JuliaUGen_cpp_files}"
+    "${JuliaUGen_sc_files}"
+    "${JuliaUGen_schelp_files}"
+    "${shared_libs}"
+)
 
 # End target JuliaUGen
 ####################################################################################################

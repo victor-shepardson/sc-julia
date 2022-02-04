@@ -2,7 +2,9 @@
 
 Author: Victor Shepardson
 
-proof-of-concept SuperCollider+Julia integration
+proof-of-concept SuperCollider+Julia integration.
+
+Currently tested against MacOS 10.14.6, Supercollider 3.13.0-dev, Julia 1.7.1-debug
 
 ### Requirements
 
