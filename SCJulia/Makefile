@@ -14,7 +14,7 @@
 ROOT_DIR := $(abspath $(dir $(lastword $(MAKEFILE_LIST))))
 BUILD := $(ROOT_DIR)/build
 
-JULIA ?= julia # julia-debug #
+JULIA ?= julia-debug # julia # 
 JULIA_DIR := $(shell $(JULIA) --startup-file=no -e 'print(dirname(Sys.BINDIR))')
 DLEXT := $(shell $(JULIA) --startup-file=no -e 'using Libdl; print(Libdl.dlext)')
 VERSION := $(shell sed -n 's/^version *= *"\(.*\)"/\1/p' $(ROOT_DIR)/Project.toml)

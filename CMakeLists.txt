@@ -5,8 +5,23 @@
 ####################################################################################################
 
 # TODO: merge with Julia package Makefile so this is specified in one place
-set(JULIA_PACKAGE SCJulia)
-set(JULIA_LIBNAME scjulia)
+# get names from toml files
+# set any other names here and pass to Makefile, which passes to build.jl
+set(JULIA_PACKAGE SCJulia) # could get fancy and find Project.toml in a subdirectory
+set(JULIA_LIBNAME scjulia) # could lowercase/shorten above
+# get version from $JULIA_PACKAGE/Project.toml
+# execute_process(
+#     ... $JULIA_PACKAGE/Project.toml...
+#     OUTPUT_VARIABLE JULIA_LIBVERSION
+# )
+
+# could eliminate install target and all that cruft from Makefile?
+# could also remove the version number from the path
+# Q: any reason to have separate version for the julia package and plugin?
+# A: i think no, since there should be a third Julia Project for reused code --
+# the two here are builder / wrapper
+# should have a SSOT for the version and use it for CI builds of the plugin then
+
 set(JULIA_LIBVERSION 0.1.0)
 set(JULIA_BUILD ${JULIA_PACKAGE}/${JULIA_LIBNAME}-${JULIA_LIBVERSION}/${JULIA_LIBNAME})
 
