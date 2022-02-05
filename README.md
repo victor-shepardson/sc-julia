@@ -19,20 +19,15 @@ Clone the project:
     git clone https://github.com/victor-shepardson/sc-julia
     cd sc-julia
 
-First, build the Julia package:
-
-    cd SCJulia
-    make
-    cd ..
-
-Then, use CMake to configure and build the SuperCollider extension:
+CMake will build the Julia package, then the SuperCollider extension:
 
     mkdir build
     cd build
-    cmake .. -DCMAKE_BUILD_TYPE=Release
-    cmake --build . --config Release
+    cmake .. -DCMAKE_BUILD_TYPE=Debug 
+    cmake --build . --config Debug
 
-Finally, link `sc-julia` into your SuperCollider extensions directory.
+Finally, link `sc-julia` into your SuperCollider extensions directory. The `install` 
+target is not set up yet.
 
 <!--
 TODO: install target
@@ -46,11 +41,17 @@ It's expected that the SuperCollider repo is cloned at `../supercollider` relati
 it's not: add the option `-DSC_PATH=/path/to/sc/source`.
 
 The julia executable should be linked to a default system location so it can be invoked as `julia`
-or `julia-debug` (in the latter case supply `-DJULIA=julia-debug`)
+or `julia-debug` (in the latter case supply `-DJULIA=julia-debug` to CMake)
 
 ### Developing
 
-Use the command in `regenerate` to update CMakeLists.txt when you add or remove files from the
+Use the command in `regenerate` to update CMakeLists.txt when you add or remove files
+ from the
 project. You don't need to run it if you only change the contents of existing files. You may need to
 edit the command if you add, remove, or rename plugins, to match the new plugin paths. Run the 
 script with `--help` to see all available options.
+
+### Known Issues / Caveats
+
+- Currently works when built against debug version of Julia only. 
+- Probably not compatible with any other SC plugins which attempt to use Julia.
