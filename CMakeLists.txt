@@ -4,26 +4,37 @@
 # 2022-02-02
 ####################################################################################################
 
-# TODO: merge with Julia package Makefile so this is specified in one place
-# get names from toml files
-# set any other names here and pass to Makefile, which passes to build.jl
-set(JULIA_PACKAGE SCJulia) # could get fancy and find Project.toml in a subdirectory
-set(JULIA_LIBNAME scjulia) # could lowercase/shorten above
+# get the name of Julia package by looking for a Project.toml
+execute_process(
+    COMMAND find . "-name" Project.toml "-depth" 2
+    COMMAND cut "-d/" -f2
+    WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+    OUTPUT_STRIP_TRAILING_WHITESPACE
+    OUTPUT_VARIABLE JULIA_PACKAGE
+    COMMAND_ERROR_IS_FATAL ANY
+)
+
+# set the library name by lowercasing julia package
+execute_process(
+    COMMAND echo ${JULIA_PACKAGE}
+    COMMAND tr "[:upper:]" "[:lower:]"
+    OUTPUT_STRIP_TRAILING_WHITESPACE
+    OUTPUT_VARIABLE JULIA_LIBNAME
+    COMMAND_ERROR_IS_FATAL ANY
+)
+
+# set(JULIA_LIBNAME scjulia) # could lowercase/shorten above
 # get version from $JULIA_PACKAGE/Project.toml
 # execute_process(
-#     ... $JULIA_PACKAGE/Project.toml...
+#     sed -n 's/^version *= *"\(.*\)"/\1/p' ${JULIA_PACKAGE}/Project.toml
 #     OUTPUT_VARIABLE JULIA_LIBVERSION
 # )
 
-# could eliminate install target and all that cruft from Makefile?
-# could also remove the version number from the path
-# Q: any reason to have separate version for the julia package and plugin?
-# A: i think no, since there should be a third Julia Project for reused code --
-# the two here are builder / wrapper
-# should have a SSOT for the version and use it for CI builds of the plugin then
+# set(JULIA_LIBVERSION 0.1.0)
+# set(JULIA_BUILD ${JULIA_PACKAGE}/${JULIA_LIBNAME}-${JULIA_LIBVERSION}/${JULIA_LIBNAME})
+set(JULIA_BUILD ${JULIA_PACKAGE}/build/${JULIA_LIBNAME})
 
-set(JULIA_LIBVERSION 0.1.0)
-set(JULIA_BUILD ${JULIA_PACKAGE}/${JULIA_LIBNAME}-${JULIA_LIBVERSION}/${JULIA_LIBNAME})
+message(STATUS "Julia package will be built at '${JULIA_BUILD}'")
 
 # set the julia executable (julia or julia-debug)
 if(NOT JULIA)
@@ -95,25 +106,27 @@ if (NOVA_SIMD)
 	include_directories(${SC_PATH}/external_libraries/nova-simd)
 endif()
 
-# Julia:
 include_directories(${JULIA_PATH}/include/julia)
 include_directories(${CMAKE_SOURCE_DIR}/${JULIA_BUILD}/include/)
 
+# TODO: make this work for Linux
 set(CMAKE_MACOSX_RPATH true)
 set(CMAKE_SKIP_BUILD_RPATH true)
 add_link_options("-Wl,-rpath,@loader_path/../${JULIA_BUILD}/lib/")
 add_link_options("-Wl,-rpath,@loader_path/../${JULIA_BUILD}/lib/julia/")
 
-
-add_library(JULIA_LIB SHARED IMPORTED)
-set_property(TARGET JULIA_LIB PROPERTY IMPORTED_LOCATION ${CMAKE_SOURCE_DIR}/${JULIA_BUILD}/lib/lib${JULIA}.dylib)
-
-add_library(SCJULIA_LIB SHARED IMPORTED)
-set_property(TARGET SCJULIA_LIB PROPERTY IMPORTED_LOCATION ${CMAKE_SOURCE_DIR}/${JULIA_BUILD}/lib/lib${JULIA_LIBNAME}.dylib)
+# build shared libraries via Julia project's Makefile
+# TODO: migrate the whole SCJulia/Makefile into cmake?
+set(JULIA_LIB ${CMAKE_SOURCE_DIR}/${JULIA_BUILD}/lib/lib${JULIA}.dylib)
+set(SCJULIA_LIB ${CMAKE_SOURCE_DIR}/${JULIA_BUILD}/lib/lib${JULIA_LIBNAME}.dylib)
+add_custom_target(julia_package_make ALL
+    COMMAND NAME=${JULIA_LIBNAME} JULIA=${JULIA} make
+    WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/${JULIA_PACKAGE}
+)
 
 set(shared_libs
-    JULIA_LIB
-    SCJULIA_LIB
+    ${JULIA_LIB}
+    ${SCJULIA_LIB}
 )
 
 ####################################################################################################
@@ -136,7 +149,8 @@ sc_add_server_plugin(
     "${JuliaUGen_cpp_files}"
     "${JuliaUGen_sc_files}"
     "${JuliaUGen_schelp_files}"
-    "${shared_libs}"
+    "${shared_libs}" # extra shared libraries for plugin targets
+    julia_package_make # extra dependencies for plugin targets
 )
 
 # End target JuliaUGen
