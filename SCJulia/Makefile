@@ -36,9 +36,9 @@ LIB_PATH := $(LIB_DIR)/$(LIB_NAME)
 $(LIB_PATH) $(INCLUDES): $(BUILDER)/build.jl $(DEPS)
 	$(JULIA) --startup-file=no --project=. -e 'using Pkg; Pkg.instantiate()'
 	$(JULIA) --startup-file=no --project=$(BUILDER) -e 'using Pkg; Pkg.instantiate()'
-	$(JULIA) --startup-file=no --project=$(BUILDER) $< $(NAME)
+# $(JULIA) --startup-file=no --project=$(BUILDER) $< $(NAME)
 # Replace the previous line with the line below to enable verbose debugging during package build
-#	JULIA_DEBUG=PackageCompiler $(JULIA) --startup-file=no --project=$(BUILD) $< $(OUT_DIR)
+	JULIA_DEBUG=PackageCompiler $(JULIA) --startup-file=no --project=$(BUILDER) $< $(NAME)
 
 build: $(LIB_PATH) $(INCLUDES) README.md
 

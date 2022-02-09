@@ -38,7 +38,7 @@ PackageCompiler.create_library(".", string("build/", lib_name);
     filter_stdlibs=true,
     header_files=[joinpath(build_dir, "scjulia.h")],
     force=true,
-    version=version,
+    # version=version,
     compat_level=compatibility,
     sysimage_build_args=`-g 2 -O0 -t 4`
 )

@@ -114,6 +114,9 @@ set(CMAKE_MACOSX_RPATH true)
 set(CMAKE_SKIP_BUILD_RPATH true)
 add_link_options("-Wl,-rpath,@loader_path/../${JULIA_BUILD}/lib/")
 add_link_options("-Wl,-rpath,@loader_path/../${JULIA_BUILD}/lib/julia/")
+# for install, i think all julia libs should to go in same dir
+# as the .scx, which is what Windows will need?
+# add_link_options("-Wl,-rpath,@loader_path/")
 
 # build shared libraries via Julia project's Makefile
 # TODO: migrate the whole SCJulia/Makefile into cmake?

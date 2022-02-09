@@ -76,6 +76,9 @@ function(sc_add_server_plugin dest_dir name cpp sc schelp shared_libs custom_dep
         message(STATUS "Added server plugin target ${sn_name}")
     endif()
 
+    # TODO: transitive deps?
+    # install(FILES ${shared_libs} DESTINATION ${dest_dir})
+
     if(sc)
         install(FILES ${sc} DESTINATION ${dest_dir}/Classes)
     endif()
