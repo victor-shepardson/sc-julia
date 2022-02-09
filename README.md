@@ -4,7 +4,7 @@ Author: Victor Shepardson
 
 proof-of-concept SuperCollider+Julia integration.
 
-Currently tested against MacOS 10.14.6, Supercollider 3.13.0-dev, Julia 1.7.1-debug
+Currently tested against MacOS 10.14.6, Supercollider 3.13.0-dev, Julia 1.7.1
 
 ### Requirements
 
@@ -14,17 +14,29 @@ Currently tested against MacOS 10.14.6, Supercollider 3.13.0-dev, Julia 1.7.1-de
 
 ### Building
 
+For macOS x64
+
+Build Julia
+(it ought to work with the official release but there is some esoteric linking problem):
+
+    git clone https://github.com/JuliaLang/julia
+    cd julia
+    git checkout v1.7.1
+    make
+    ln -s julia /usr/local/bin/julia
+    cd ..
+
 Clone the project:
 
     git clone https://github.com/victor-shepardson/sc-julia
-    cd sc-julia
 
 CMake will build the Julia package, then the SuperCollider extension:
 
+    cd sc-julia
     mkdir build
     cd build
-    cmake .. -DCMAKE_BUILD_TYPE=Debug 
-    cmake --build . --config Debug
+    cmake .. -DCMAKE_BUILD_TYPE=RelWithDebugSymbols
+    cmake --build . --config Release
 
 Finally, link `sc-julia` into your SuperCollider extensions directory. The `install` 
 target is not set up yet.
@@ -53,5 +65,5 @@ script with `--help` to see all available options.
 
 ### Known Issues / Caveats
 
-- Currently works when built against debug version of Julia only. 
-- Probably not compatible with any other SC plugins which attempt to use Julia.
+- Currently works with locally built version of Julia only. 
+- Probably not compatible with any other SC plugins which attempt to use Julia!
