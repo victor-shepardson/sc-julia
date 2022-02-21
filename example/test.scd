@@ -7,16 +7,26 @@ s.options.memSize = 1024 * 1024;
 s.boot
 )
 
+(
+Server.default = s = Server("remote", NetAddr("127.0.0.1", 57110));
+// s.options.maxLogins = 4; // should match the settings on the Bela
+s.initTree;
+s.startAliveThread;
+)
+
+s.options.asOptionsString
+
 s.reboot
 
 ("xattr -d -r com.apple.quarantine"+Platform.userExtensionDir.quote++"/sc-julia/").runInTerminal
 
 (
 ~synth = {
-    JuliaUGen.ar(SinOsc.ar, DC.ar(0.1));
+    JuliaUGen.ar(SinOsc.ar(481), DC.ar(0.1));
 }.play
 )
 
 ~synth.free
 
 s.quit
+

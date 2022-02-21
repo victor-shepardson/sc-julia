@@ -12,6 +12,7 @@ extern "C" {
 
 namespace JuliaUGen {
 
+//global flag for whether Julia runtime needs init
 bool JULIA_INIT = false;
 
 class JuliaUGen : public SCUnit {
@@ -26,6 +27,10 @@ private:
     void next(int nSamples);
 
     // Member variables
+    SCJuliaState state;
+    // Julia step function
+    // step_fn_t step;
+
 };
 
 } // namespace JuliaUGen

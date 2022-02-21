@@ -1,6 +1,8 @@
 #include "test.hpp"
 #include <iostream>
 
+using namespace std;
+
 int main (int argc, char** argv){
     // std::cout << argc;
     // for(int i=0; i<argc; i++) std::cout << argv[i];
@@ -9,9 +11,36 @@ int main (int argc, char** argv){
     char** argv_ = const_cast<char**>(&arg);
     init_julia(argc_, argv_);
 
-    std::cout << whitenoise(0.5f);
+    cout << "julia initialized\n";
+
+    // float* workspace = (float*)malloc(3*sizeof(float));
+    // workspace[1] = 0.5;
+    // step_fn_t step = setup(workspace, 3);
+    scjulia_setup();
+
+    cout << "gc disabled\n";
+
+    float* phase = (float*)malloc(sizeof(float));
+    *phase = 0.0f;
+    struct SCJuliaState state = {phase};
+
+    cout << "state struct created\n";
+
+    for (int i=0; i<8; i++)
+        cout << scjulia_step(state, 0.5, 0.5) << "\n";
+
+    cout << "...\n";
+    for (int i=0; i<100000000; i++){
+        scjulia_step(state, 0.5, 0.5);
+    }
+
+    for (int i=0; i<8; i++)
+        cout << scjulia_step(state, 0.5, 0.5) << "\n";
 
     shutdown_julia(0);
+
+    cout << "julia shut down\n";
+
     return 0;
 }
 

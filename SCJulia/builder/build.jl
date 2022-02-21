@@ -40,5 +40,5 @@ PackageCompiler.create_library(".", string("build/", lib_name);
     force=true,
     # version=version,
     compat_level=compatibility,
-    sysimage_build_args=`-g 2 -O0 -t 4`
+    # sysimage_build_args=`-g 2 -O0 -t 4`
 )
