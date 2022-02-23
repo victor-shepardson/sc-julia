@@ -15,7 +15,8 @@ export setup
 # =============================================================================
 
 # option A
-# assemble state as a C struct, and pass it as the first argument to a global step function
+# keep state in a C struct, and pass it as the first argument to a global step function
+# setup is only needed to disable GC
 
 struct State
     phase::MVector{1, Cfloat}
